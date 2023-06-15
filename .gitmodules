@@ -1,0 +1,8 @@
+[submodule "extension_modules/murse/murse_c_export/murse"]
+	path = extension_modules/murse/murse_c_export/murse
+	url = https://git.sr.ht/~webb/murse
+	branch = next
+[submodule "godot-cpp"]
+	path = godot-cpp
+	url = https://github.com/godotengine/godot-cpp.git
+	branch = 4.0

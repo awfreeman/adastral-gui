@@ -40,7 +40,7 @@ func _ready():
 	$TopPanel/AboutButton.modulate = Color("f8f3ee")
 	$TopPanel/AdvancedButton.modulate = Color("f8f3ee")
 	$TopPanel/AdastralLogo.texture = default_logo
-	
+	print(Murse.new().gimmethat())
 
 func _on_OFButton_pressed():
 #	var tween = get_tree().create_tween()
