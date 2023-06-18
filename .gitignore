@@ -7,5 +7,5 @@ extension_modules/murse/*.os
 .sconsign.dblite
 extension_api.json
 #cgo
-extension_modules/murse/murse_c_export/*.h
-extension_modules/murse/murse_c_export/*.a
+extension_modules/murse/murse_c_export.h
+extension_modules/murse/murse_c_export.a

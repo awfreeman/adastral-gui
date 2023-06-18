@@ -1,8 +1,9 @@
 package main
 
 // #include <stdlib.h>
-// typedef void (*cb)(char*);
-// static void callback(cb f, char* message) { f(message); }
+// #include <pthread>
+// typedef void (*cb)(int, pthread_mutex_t*, char*, int);
+// static void callback(cb f, int fd, pthread_mutex_t *mutex, char *message, int length) { f(fd, mutex, message, length); }
 import "C"
 import (
 	"context"
@@ -23,7 +24,7 @@ const (
 )
 
 //export murseop
-func murseop(operation C.int, dl_url *C.char, game_dir *C.char, key *C.char, callback C.cb) C.int {
+func murseop(operation C.int, dl_url *C.char, game_dir *C.char, key *C.char, callback C.cb, mutex *C.pthread_mutex_t, fd C.int) C.int {
 	gdl_url := C.GoString(dl_url)
 	ggame_dir := C.GoString(game_dir)
 	tvn_url, err := url.Parse(gdl_url)
@@ -77,18 +78,20 @@ func murseop(operation C.int, dl_url *C.char, game_dir *C.char, key *C.char, cal
 		select {
 		case msg := <-channel:
 			{
-				str := C.CString(msg.MurseFmt())
-				C.callback(callback, str)
-				C.free(unsafe.Pointer(str))
+				str := msg.MurseFmt()
+				cstr := C.CString(str)
+				C.callback(callback, fd, mutex, cstr, len(str))
+				C.free(unsafe.Pointer(cstr))
 			}
 		case err := <-done:
 			{
 				if err == nil {
 					return 0
 				} else {
-					estr := C.CString(err.Error())
-					C.callback(callback, estr)
-					C.free(unsafe.Pointer(estr))
+					str := err.Error()
+					cstr := C.CString(str)
+					C.callback(callback, fd, mutex, cstr, len(str))
+					C.free(unsafe.Pointer(cstr))
 					return -1
 				}
 			}

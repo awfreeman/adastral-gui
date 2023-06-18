@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import sys
-
 env = SConscript("godot-cpp/SConstruct")
 
 # For reference:
@@ -14,7 +13,17 @@ env = SConscript("godot-cpp/SConstruct")
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=["extension_modules/murse/"])
-sources = Glob("extension_modules/murse/*.cpp")
+rdir = os.curdir
+os.chdir("extension_modules/murse/murse_c_export")
+proc = os.popen("go build -buildmode=c-archive")
+print(proc.read())
+code = proc.close()
+if code is not None:
+    exit(-1)
+os.rename("murse_c_export.h", "../murse_c_export.h")
+os.rename("murse_c_export.a", "../murse_c_export.a")
+os.chdir(rdir)
+sources = Glob("extension_modules/murse/*.cpp", "extension_modules/murse/*.a")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(

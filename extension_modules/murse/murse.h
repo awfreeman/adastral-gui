@@ -2,24 +2,29 @@
 #define MURSE_H
 
 #include <godot_cpp/classes/object.hpp>
-#include <godot_cpp/classes/mutex.hpp>
-#include <godot_cpp/classes/thread.hpp>
-//#include "murse_c_export.h"
+#include <pthread.h>
+#include <unistd.h>
+#include "murse_c_export.h"
 
 namespace godot {
     class Murse : public Object{
         GDCLASS(Murse, Object)
         private:
-            //Mutex output_mutex;
-            //Array output_lines;
-            //Thread murse_thread;
-            //void output_callback_reciever(const char *line);
+            pthread_t murse_thread;
+            pthread_mutex_t murse_mutex;
+            int out_pipe[2];
         protected:
             static void _bind_methods();
         public: 
             Murse();
             ~Murse();
-            Variant gimmethat();
+            Variant start_update(Variant path, Variant dl_url, Variant key);
+            Variant start_verify(Variant path, Variant dl_url, Variant key);
+            Variant start_repair(Variant path, Variant dl_url, Variant key);
+            Variant complete();
+            Variant is_complete();
+            Variant get_lines();
+
     };
 }
 
